@@ -8,7 +8,7 @@ from constants_thermo_sim import CP, KELVIN, WATERDENSITY, SIGMA, E, H
 class RunThermoSim:
 
     def __init__(self):
-
+        self.entriesTank = {}
         self.sa_tank = float(self.entriesTank['Surface Area of Tank (m^2)'].get())
         self.Af = np.round(self.A, 2)
         self.outputFields = ('Required Area (m^2): ', 'Morning Temperature: (ºC)')
@@ -29,7 +29,7 @@ class RunThermoSim:
         self.A = 0
 
         self.entriesBB = {}
-        self.entriesTank = {}
+
         self.outputs = {}
 
         self.V_gal = 0
@@ -202,7 +202,7 @@ class RunThermoSim:
 
         style = ttk.Style()
         style.theme_use('classic')
-        style.configure("GP.TLabel", foreground="darkgoldenrod", background='blanched almond')
+        style.configure("GP.TLabel", foreground="goldenrod", background='blanched almond')
 
         ttk.Button(root, text='Calculate Area',
                    command=(lambda e: self.calculate_area_black_body())).grid(row=9, column=0, padx=5, pady=5)
