@@ -19,11 +19,6 @@ class RunThermoSim:
             'Final Water Temperature (ºC)', 'Volume of Water (Gal)', 'Hours Per Day')
         self.initialize_variables()
         self.build_gui()
-
-    def initialize_variables(self) -> None:
-
-        # GLOBAL VARIABLES
-
         self.Tf = 0  # initialize Temperature Final to be a global variable
         self.hrsWithSun = 0
 
@@ -39,15 +34,18 @@ class RunThermoSim:
 
         self.V = 0
 
-
         self.m = 0
 
         self.cost = 0
 
         self.delT_ambientTemp_wallTemp = 0
 
-    def calculate_area_bb(self):
-    # Calculations based on heat transfer principles
+    def initialize_variables(self) -> None:
+
+
+
+        def calculate_area_bb(self):
+            # Calculations based on heat transfer principles
 
 
         # solar index:
