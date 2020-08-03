@@ -103,7 +103,7 @@ class RunThermoSim:
         # thickness of insulation used to calculate R (thermal conductivity)
         t_ins = float(self.entriesTank['Insulation Thickness (m)'].get())
 
-        h = 7
+        heat_transfer_coefficient = 7
         # surface area of tank, units: m^2
 
         # thermal resistance, units: (m^2 * K)/W
@@ -124,7 +124,8 @@ class RunThermoSim:
 
         # energy, units: W
         q = ((
-                     delta_tank_temperature_kelvin * self.sa_tank) / r_total) + h * self.sa_tank * self.delT_ambientTemp_wallTemp
+                     delta_tank_temperature_kelvin * self.sa_tank) / r_total) + \
+            heat_transfer_coefficient * self.sa_tank * self.delT_ambientTemp_wallTemp
 
         # number of hours spent w/o energy coming in from the sun, 18 for our test
         # this is the time in hours that the water begins to loose energy
@@ -145,7 +146,7 @@ class RunThermoSim:
         t_morn = round(morning_water_temperature, 2)
 
         print(
-            f'The morning water temperature will be: {t_morn}ºC with {round(loss_ratio, 2)}% energy lost')
+            f"The morning water temperature will be: {t_morn}ºC with {round(loss_ratio, 2)}% energy lost")
 
         # outputs
         self.outputs['Morning Temperature: (ºC)'].delete(0, tk.END)
@@ -180,18 +181,18 @@ class RunThermoSim:
             self.entriesTank[field] = entry_temperature
             count_tank += int(1)
 
-        labelsColCount = int(0)
-        entriesColCount = int(1)
+        labels_column_count = int(0)
+        entries_column_count = int(1)
         for output in self.outputFields:
-            resultLabels = ttk.Label(entries_frame, width=20, text=output, foreground='Purple3')
-            resultLabels.grid(row=10, column=labelsColCount, padx=5, pady=5)
+            result_labels = ttk.Label(entries_frame, width=20, text=output, foreground='Purple3')
+            result_labels.grid(row=10, column=labels_column_count, padx=5, pady=5)
 
-            resultEntries = ttk.Entry(entries_frame, width=15)
-            resultEntries.grid(row=10, column=entriesColCount, padx=5, pady=5)
-            labelsColCount += int(2)
-            entriesColCount += int(2)
+            result_entries = ttk.Entry(entries_frame, width=15)
+            result_entries.grid(row=10, column=entries_column_count, padx=5, pady=5)
+            labels_column_count += int(2)
+            entries_column_count += int(2)
 
-            self.outputs[output] = resultEntries
+            self.outputs[output] = result_entries
 
     def build_gui(self):
         root = tk.Tk()
@@ -203,13 +204,13 @@ class RunThermoSim:
         style.theme_use('classic')
         style.configure("GP.TLabel", foreground="darkgoldenrod", background='blanched almond')
 
-        b1 = ttk.Button(root, text='Calculate Area',
-                        command=(lambda e=ents: self.calculate_area_bb())).grid(row=9, column=0, padx=5, pady=5)
+        ttk.Button(root, text='Calculate Area',
+                   command=(lambda e=ents: self.calculate_area_bb())).grid(row=9, column=0, padx=5, pady=5)
 
-        b2 = ttk.Button(root, text='Calculate Morning Temperature',
-                        command=(lambda e=ents: self.ins_tank())).grid(row=9, column=3, padx=5, pady=5)
+        ttk.Button(root, text='Calculate Morning Temperature',
+                   command=(lambda e=ents: self.ins_tank())).grid(row=9, column=3, padx=5, pady=5)
 
-        b4 = ttk.Button(root, text='Quit', command=root.quit).grid(row=12, column=5, padx=5, pady=5)
+        ttk.Button(root, text='Quit', command=root.quit).grid(row=12, column=5, padx=5, pady=5)
 
         root.mainloop()
 
