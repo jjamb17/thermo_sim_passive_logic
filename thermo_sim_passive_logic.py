@@ -51,7 +51,7 @@ class RunThermoSim:
         print("Solar Index", solar_index)
 
         # ambient temperature aka average outside temperature, units: celsius (ºC)
-        ambient_temperature_black_body: float = float(self.entriesBB['Average Daytime Air Temperature (ºC)'].get())
+        ambient_temperature_black_body = float(self.entriesBB['Average Daytime Air Temperature (ºC)'].get())
         temperature_infinite = ambient_temperature_black_body + KELVIN  # units: converted ºC to Kelvin (K)
 
         # initial water temperature, units: celsius (ºC), 20 for our test
@@ -78,7 +78,7 @@ class RunThermoSim:
         hours_in_sun: float = float(self.entriesBB['Hours Per Day'].get())
         time = hours_in_sun * 3600  # units: converted hrs to seconds
 
-        delta_temperature_glass_and_black_body = -2.5   # temperature difference glass and black body
+        delta_temperature_glass_and_black_body = -2.5  # temperature difference glass and black body
 
         # solve for area and output it.
         self.A = (self.m * CP * (self.Tf - self.Ti)) / (
@@ -115,79 +115,78 @@ class RunThermoSim:
 
         # the temperature of what is surrounding the tank overnight
         # ambient temperature for tank, avg night temperature
-        ambientTemp_tank = float(self.entriesTank['Average Nightly Air Temperature (ºC)'].get())
-        ambientTemp_tank_K = ambientTemp_tank + self.kelvin  # units: converted
+        ambient_tank_temperature = float(self.entriesTank['Average Nightly Air Temperature (ºC)'].get())
+        ambient_tank_temperature_kelvin = ambient_tank_temperature + KELVIN  # units: converted
 
         self.Ti = self.Tf
 
-        delT_tank = self.Ti - ambientTemp_tank_K  # units: Kelvin (K)
+        delta_tank_temperature_kelvin = self.Ti - ambient_tank_temperature_kelvin  # units: Kelvin (K)
 
         # energy, units: W
-        q = ((delT_tank * self.sa_tank) / r_total) + h * self.sa_tank * self.delT_ambientTemp_wallTemp
+        q = ((
+                     delta_tank_temperature_kelvin * self.sa_tank) / r_total) + h * self.sa_tank * self.delT_ambientTemp_wallTemp
 
         # number of hours spent w/o energy coming in from the sun, 18 for our test
-        # hrs_tank = float(entries['Hours Overnight'].get())
         # this is the time in hours that the water begins to loose energy
-        hrsWithoutSun = float(self.entriesTank['Hours Overnight'].get())
-        hrsWithoutSun_tank = 24 - hrsWithoutSun
-        time = hrsWithoutSun_tank * 3600  # conversion of time into seconds
+        hours_without_sun = float(self.entriesTank['Hours Overnight'].get())
+        hours_without_sun_tank = 24 - hours_without_sun
+        time = hours_without_sun_tank * 3600  # conversion of time into seconds
 
         # total energy coming into tank, units: Joules (J)
-        energyGained = delT_tank * self.m * self.Cp
+        energy_gain = delta_tank_temperature_kelvin * self.m * CP
         # total energy lost, units: Joules (J)
-        energyLost = q * time
+        energy_loss = q * time
 
         # percentage of energy lost, units: %
-        lossRatio = (1 - ((energyGained - energyLost) / energyGained)) * 100
+        loss_ratio = (1 - ((energy_gain - energy_loss) / energy_gain)) * 100
         # morning temperature of water, units: celsius (ºC)
-        morningWaterTemp = (energyGained - energyLost) / (self.m * self.Cp) + ambientTemp_tank
+        morning_water_temperature = (energy_gain - energy_loss) / (self.m * CP) + ambient_tank_temperature
 
-        tMorn = round(morningWaterTemp, 2)
+        t_morn = round(morning_water_temperature, 2)
 
         print(
-            f'The morning water temperature will be: {tMorn}ºC with {round(lossRatio, 2)}% energy lost')
-        ######### outputs #########
+            f'The morning water temperature will be: {t_morn}ºC with {round(loss_ratio, 2)}% energy lost')
+
+        # outputs
         self.outputs['Morning Temperature: (ºC)'].delete(0, tk.END)
-        self.outputs['Morning Temperature: (ºC)'].insert(0, tMorn)
+        self.outputs['Morning Temperature: (ºC)'].insert(0, t_morn)
 
+    def make_form(self, root):  # fieldsBB, fieldsTank, outputFields:
 
-    def make_form(self, root):  # fieldsBB, fieldsTank, outputFields):
+        entries_frame = ttk.Frame(root)
+        entries_frame.grid(row=0, column=0, rowspan=5, columnspan=6, sticky=W + E + N + S)
 
-        entriesFrame = ttk.Frame(root)
-        entriesFrame.grid(row=0, column=0, rowspan=5, columnspan=6, sticky=W + E + N + S)
-
-        countBB = int(0)
-        countTank = int(0)
-        countHL = int(0)
+        count_black_body = int(0)
+        count_tank = int(0)
 
         for field in self.fieldsBB:
             print(field)
-            labBB = ttk.Label(entriesFrame, width=27, text=field + ": ", style="GP.TLabel")
-            entBB = ttk.Entry(entriesFrame, width=15)
-            entBB.insert(0, "0")
-            labBB.grid(row=countBB, column=0)
-            entBB.grid(row=countBB, column=1)
-            self.entriesBB[field] = entBB
-            countBB += int(1)
+            label_black_body = ttk.Label(entries_frame, width=27, text=field + ": ", style="GP.TLabel")
+            entry_black_body = ttk.Entry(entries_frame, width=15)
+            entry_black_body.insert(0, "0")
+            label_black_body.grid(row=count_black_body, column=0)
+            entry_black_body.grid(row=count_black_body, column=1)
+            self.entriesBB[field] = entry_black_body
+            count_black_body += int(1)
 
         for field in self.fieldsTank:
             print(field)
-            labT = ttk.Label(entriesFrame, width=33, text=field + ": ", style="GP.TLabel")
-            entT = ttk.Entry(entriesFrame, width=15)
-            entT.insert(0, "0")
+            label_temperature = ttk.Label(entries_frame, width=33, text=field + ": ", style="GP.TLabel")
+            entry_temperature = ttk.Entry(entries_frame, width=15)
+            entry_temperature.insert(0, "0")
 
-            labT.grid(row=countTank, column=2)
-            entT.grid(row=countTank, column=3)
-            self.entriesTank[field] = entT
-            countTank += int(1)
+            label_temperature.grid(row=count_tank, column=2)
+            entry_temperature.grid(row=count_tank, column=3)
+            self.entriesTank[field] = entry_temperature
+            count_tank += int(1)
 
         labelsColCount = int(0)
         entriesColCount = int(1)
         for output in self.outputFields:
-            resultLabels = ttk.Label(entriesFrame, width=20, text=output, foreground='Purple3')
+            resultLabels = ttk.Label(entries_frame, width=20, text=output, foreground='Purple3')
             resultLabels.grid(row=10, column=labelsColCount, padx=5, pady=5)
 
-            resultEntries = ttk.Entry(entriesFrame, width=15)
+            resultEntries = ttk.Entry(entries_frame, width=15)
             resultEntries.grid(row=10, column=entriesColCount, padx=5, pady=5)
             labelsColCount += int(2)
             entriesColCount += int(2)
