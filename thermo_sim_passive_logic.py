@@ -8,6 +8,12 @@ class RunThermoSim:
 
     def __init__(self):
 
+        self.outputFields = ('Required Area (m^2): ', 'Morning Temperature: (ºC)')
+        self.fieldsTank = ('Tank Thickness (m)', 'Thermal Conductivity (k of Tank, W/(m*K))',
+                           'Thermal Conductivity (k of Insulation, W/(m*K))',
+                           'Insulation Thickness (m)', 'Surface Area of Tank (m^2)',
+                           'Average Nightly Air Temperature (ºC)',
+                           'Hours Overnight')
         self.fieldsBB = (
             'Solar Index', 'Average Daytime Air Temperature (ºC)', 'Initial Water Temperature (ºC)',
             'Final Water Temperature (ºC)', 'Volume of Water (Gal)', 'Hours Per Day')
@@ -16,17 +22,8 @@ class RunThermoSim:
 
     def initialize_variables(self) -> None:
 
-        self.fieldsTank = ('Tank Thickness (m)', 'Thermal Conductivity (k of Tank, W/(m*K))',
-                           'Thermal Conductivity (k of Insulation, W/(m*K))',
-                           'Insulation Thickness (m)', 'Surface Area of Tank (m^2)',
-                           'Average Nightly Air Temperature (ºC)',
-                           'Hours Overnight')
-
-        self.outputFields = ('Required Area (m^2): ', 'Morning Temperature: (ºC)')
-
         # GLOBAL VARIABLES
-        self.Cp = 4180  # specific heat constant, units J/(kg * K)
-        self.kelvin = 273  # 0ºC
+
         self.Tf = 0  # initialize Temperature Final to be a global variable
         self.hrsWithSun = 0
 
@@ -42,7 +39,6 @@ class RunThermoSim:
 
         self.V = 0
 
-        self.densityOfWater = 998  # units: kg / m^3
 
         self.m = 0
 
@@ -53,8 +49,6 @@ class RunThermoSim:
     def calculate_area_bb(self):
     # Calculations based on heat transfer principles
 
-        sigma = 5.67e-8  # boltzmann constant
-        e = 0.95  # epsilon
 
         # solar index:
         SI = float(self.entriesBB['Solar Index'].get())
