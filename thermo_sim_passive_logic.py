@@ -2,7 +2,8 @@ import numpy as np
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
-from constants_thermo_sim import CP
+from constants_thermo_sim import CP, KELVIN, WATERDENSITY, SIGMA, E, H
+
 
 class RunThermoSim:
 
@@ -51,16 +52,16 @@ class RunThermoSim:
 
         # ambient temperature aka average outside temperature, units: celsius (ºC)
         ambient_temperature_black_body: float = float(self.entriesBB['Average Daytime Air Temperature (ºC)'].get())
-        temperature_infinite = ambient_temperature_black_body + self.kelvin  # units: converted ºC to Kelvin (K)
+        temperature_infinite = ambient_temperature_black_body + KELVIN  # units: converted ºC to Kelvin (K)
 
         # initial water temperature, units: celsius (ºC), 20 for our test
         initial_temperature = float(self.entriesBB['Initial Water Temperature (ºC)'].get())
-        self.Ti = initial_temperature + self.kelvin  # units: converted celsius (ºC) to Kelvin (K)
+        self.Ti = initial_temperature + KELVIN  # units: converted celsius (ºC) to Kelvin (K)
 
         # final water temperature in celsius (ºC), 50 for our test
         final_temperature = float(self.entriesBB['Final Water Temperature (ºC)'].get())
         # Tf = finalTemp + kelvin  # units: converted celsius (ºC) to Kelvin (K)
-        self.Tf = final_temperature + self.kelvin
+        self.Tf = final_temperature + KELVIN
 
         # volume, units: gallons (Gal), 134 gallons in our test
         self.V_gal = float(self.entriesBB['Volume of Water (Gal)'].get())
@@ -69,7 +70,7 @@ class RunThermoSim:
         self.V = self.V_gal / 264.17
 
         # mass of water in tank, units: kg
-        self.m = self.V * self.densityOfWater
+        self.m = self.V * WATERDENSITY
 
         # delT_bb = Tf - T_gnd_bb
 
