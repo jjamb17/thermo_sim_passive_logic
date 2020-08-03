@@ -20,7 +20,6 @@ class RunThermoSim:
         self.fieldsBB = (
             'Solar Index', 'Average Daytime Air Temperature (ºC)', 'Initial Water Temperature (ºC)',
             'Final Water Temperature (ºC)', 'Volume of Water (Gal)', 'Hours Per Day')
-        self.initialize_variables()
         self.build_gui()
         self.Tf = 0  # initialize Temperature Final to be a global variable
         self.hrsWithSun = 0
@@ -43,7 +42,8 @@ class RunThermoSim:
 
         self.delT_ambientTemp_wallTemp = 0
 
-    def initialize_variables(self) -> None:
+    def calculate_area_black_body(self):
+
         # Calculations based on heat transfer principles
 
         # solar index:
@@ -198,17 +198,17 @@ class RunThermoSim:
         root = tk.Tk()
         root.geometry("1260x800")
         root.title("Thermo Sim for Passive Logic")
-        ents = self.make_form(root)
+        self.make_form(root)
 
         style = ttk.Style()
         style.theme_use('classic')
         style.configure("GP.TLabel", foreground="darkgoldenrod", background='blanched almond')
 
         ttk.Button(root, text='Calculate Area',
-                   command=(lambda e=ents: self.calculate_area_bb())).grid(row=9, column=0, padx=5, pady=5)
+                   command=(lambda e: self.calculate_area_black_body())).grid(row=9, column=0, padx=5, pady=5)
 
         ttk.Button(root, text='Calculate Morning Temperature',
-                   command=(lambda e=ents: self.ins_tank())).grid(row=9, column=3, padx=5, pady=5)
+                   command=(lambda e: self.ins_tank())).grid(row=9, column=3, padx=5, pady=5)
 
         ttk.Button(root, text='Quit', command=root.quit).grid(row=12, column=5, padx=5, pady=5)
 
