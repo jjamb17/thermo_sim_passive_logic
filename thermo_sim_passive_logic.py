@@ -2,12 +2,13 @@ import numpy as np
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
-
+from constants_thermo_sim import CP
 
 class RunThermoSim:
 
     def __init__(self):
 
+        self.sa_tank = float(self.entriesTank['Surface Area of Tank (m^2)'].get())
         self.Af = np.round(self.A, 2)
         self.outputFields = ('Required Area (m^2): ', 'Morning Temperature: (ºC)')
         self.fieldsTank = ('Tank Thickness (m)', 'Thermal Conductivity (k of Tank, W/(m*K))',
@@ -71,18 +72,18 @@ class RunThermoSim:
         self.m = self.V * self.densityOfWater
 
         # delT_bb = Tf - T_gnd_bb
-        h = 3  # worst case convective heat transfer coefficient
 
-        # number of hours (hrs) to heat water, 5.5 for our test
+        # number of hours (hrs) to heat water
         hours_in_sun: float = float(self.entriesBB['Hours Per Day'].get())
         time = hours_in_sun * 3600  # units: converted hrs to seconds
 
         delta_temperature_glass_and_black_body = -2.5   # temperature difference glass and black body
 
         # solve for area and output it.
-        self.A = (self.m * self.Cp * (self.Tf - self.Ti)) / (
-                (solar_index - e * sigma * ((self.Tf ** 4) - (temperature_infinite ** 4)) - (h * delta_temperature_glass_and_black_body)) * time)
-        print(f'The final required area is {self.Af} m^2 to achieve {final_temperature}ºC under the conditions')  # check boxes
+        self.A = (self.m * CP * (self.Tf - self.Ti)) / (
+                (solar_index - E * SIGMA * ((self.Tf ** 4) - (temperature_infinite ** 4)) -
+                 (H * delta_temperature_glass_and_black_body)) * time)
+        print(f'The final required area is {self.Af} m^2 to achieve {final_temperature}ºC under the conditions')
 
         self.outputs['Required Area (m^2): '].delete(0, tk.END)
         self.outputs['Required Area (m^2): '].insert(0, self.Af)
@@ -103,14 +104,13 @@ class RunThermoSim:
 
         h = 7
         # surface area of tank, units: m^2
-        self.sa_tank = float(self.entriesTank['Surface Area of Tank (m^2)'].get())
 
         # thermal resistance, units: (m^2 * K)/W
         # resistance value of heat transfer crossing boundaries
         # for standard fiberglass: R_ins = 15
-        R_ins = t_ins / (k_ins * self.sa_tank)
-        R_tank = t_tank / (k_tank * self.sa_tank)  # units: (m^2 * K)/W
-        R_total = R_ins + R_tank  # units: (m^2 * K)/W, 16 for our test
+        r_ins = t_ins / (k_ins * self.sa_tank)
+        r_tank = t_tank / (k_tank * self.sa_tank)  # units: (m^2 * K)/W
+        r_total = r_ins + r_tank  # units: (m^2 * K)/W, 16 for our test
 
         # the temperature of what is surrounding the tank overnight
         # ambient temperature for tank, avg night temperature
@@ -122,7 +122,7 @@ class RunThermoSim:
         delT_tank = self.Ti - ambientTemp_tank_K  # units: Kelvin (K)
 
         # energy, units: W
-        q = ((delT_tank * self.sa_tank) / R_total) + h * self.sa_tank * self.delT_ambientTemp_wallTemp
+        q = ((delT_tank * self.sa_tank) / r_total) + h * self.sa_tank * self.delT_ambientTemp_wallTemp
 
         # number of hours spent w/o energy coming in from the sun, 18 for our test
         # hrs_tank = float(entries['Hours Overnight'].get())
