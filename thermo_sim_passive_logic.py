@@ -1,25 +1,20 @@
 import numpy as np
-import scipy
 from tkinter import *
 import tkinter as tk
-from scipy.optimize import fsolve
 from tkinter import ttk
-import math
+
 
 class RunThermoSim:
 
     def __init__(self):
 
-        self.initialize_variables()
-        self.build_gui()
-
-    # -------- Don't change anything above this line -----------
-
-    def initialize_variables(self):
-
         self.fieldsBB = (
             'Solar Index', 'Average Daytime Air Temperature (ºC)', 'Initial Water Temperature (ºC)',
             'Final Water Temperature (ºC)', 'Volume of Water (Gal)', 'Hours Per Day')
+        self.initialize_variables()
+        self.build_gui()
+
+    def initialize_variables(self) -> None:
 
         self.fieldsTank = ('Tank Thickness (m)', 'Thermal Conductivity (k of Tank, W/(m*K))',
                            'Thermal Conductivity (k of Insulation, W/(m*K))',
