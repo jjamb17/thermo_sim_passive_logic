@@ -12,11 +12,11 @@ class ThermoSimModel:
             'Solar Index', 'Average Daytime Air Temperature (ºC)', 'Initial Water Temperature (ºC)',
             'Final Water Temperature (ºC)', 'Volume of Water (Gal)', 'Hours Per Day')
 
-        self.Tf = 0  # initialize Temperature Final to be a global variable
+        self.temperature_final = 0  # initialize Temperature Final to be a global variable
         self.hrsWithSun = 0
 
         self.Ti = 0
-        self.Tf = 0
+        self.temperature_final = 0
         self.A = 0
 
         self.entriesBB = {}

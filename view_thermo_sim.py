@@ -52,7 +52,6 @@ class ThermoSimView:
 
     def build_gui(self):
         root = tk.Tk()
-        root.geometry("1260x800")
         root.title("Thermo Sim for Passive Logic")
         self.make_form(root)
 
@@ -64,7 +63,7 @@ class ThermoSimView:
                    command=self.controller.calculate_area_black_body).grid(row=9, column=0, padx=5, pady=5)
 
         ttk.Button(root, text='Calculate Morning Temperature',
-                   command=self.controller.ins_tank()).grid(row=9, column=3, padx=5, pady=5)
+                   command=self.controller.ins_tank).grid(row=9, column=3, padx=5, pady=5)
 
         ttk.Button(root, text='Quit', command=root.quit).grid(row=12, column=5, padx=5, pady=5)
 
