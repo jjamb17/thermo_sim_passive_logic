@@ -113,7 +113,7 @@ class RunThermoSim:
         # for standard fiberglass: R_ins = 15
         r_ins = t_ins / (k_ins * self.sa_tank)
         r_tank = t_tank / (k_tank * self.sa_tank)  # units: (m^2 * K)/W
-        r_total = r_ins + r_tank  # units: (m^2 * K)/W, 16 for our test
+        r_total = r_ins + r_tank  # units: (m^2 * K)/W
 
         # the temperature of what is surrounding the tank overnight
         # ambient temperature for tank, avg night temperature
@@ -129,8 +129,6 @@ class RunThermoSim:
                      delta_tank_temperature_kelvin * self.sa_tank) / r_total) + \
             heat_transfer_coefficient * self.sa_tank * self.delT_ambientTemp_wallTemp
 
-        # number of hours spent w/o energy coming in from the sun, 18 for our test
-        # this is the time in hours that the water begins to loose energy
         hours_without_sun = float(self.entriesTank['Hours Overnight'].get())
         hours_without_sun_tank = 24 - hours_without_sun
         time = hours_without_sun_tank * 3600  # conversion of time into seconds
