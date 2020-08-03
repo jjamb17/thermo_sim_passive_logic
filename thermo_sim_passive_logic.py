@@ -8,6 +8,7 @@ class RunThermoSim:
 
     def __init__(self):
 
+        self.Af = np.round(self.A, 2)
         self.outputFields = ('Required Area (m^2): ', 'Morning Temperature: (ºC)')
         self.fieldsTank = ('Tank Thickness (m)', 'Thermal Conductivity (k of Tank, W/(m*K))',
                            'Thermal Conductivity (k of Insulation, W/(m*K))',
@@ -76,12 +77,12 @@ class RunThermoSim:
         hours_in_sun: float = float(self.entriesBB['Hours Per Day'].get())
         time = hours_in_sun * 3600  # units: converted hrs to seconds
 
-        deltaT_airPlexiAndBB_waterTempBB = -2.5
+        delta_temperature_glass_and_black_body = -2.5   # temperature difference glass and black body
+
         # solve for area and output it.
         self.A = (self.m * self.Cp * (self.Tf - self.Ti)) / (
-                (solar_index - e * sigma * ((self.Tf ** 4) - (temperature_infinite ** 4)) - (h * deltaT_airPlexiAndBB_waterTempBB)) * time)
-        self.Af = np.round(self.A, 2)
-        print(f'The final required area is {self.Af} m^2 to achieve {final_temperature}ºC under the conditions')  # check boxes:
+                (solar_index - e * sigma * ((self.Tf ** 4) - (temperature_infinite ** 4)) - (h * delta_temperature_glass_and_black_body)) * time)
+        print(f'The final required area is {self.Af} m^2 to achieve {final_temperature}ºC under the conditions')  # check boxes
 
         self.outputs['Required Area (m^2): '].delete(0, tk.END)
         self.outputs['Required Area (m^2): '].insert(0, self.Af)
@@ -101,7 +102,7 @@ class RunThermoSim:
         t_ins = float(self.entriesTank['Insulation Thickness (m)'].get())
 
         h = 7
-        # surface area of tank, units: m^2, 8.7 for our test
+        # surface area of tank, units: m^2
         self.sa_tank = float(self.entriesTank['Surface Area of Tank (m^2)'].get())
 
         # thermal resistance, units: (m^2 * K)/W
