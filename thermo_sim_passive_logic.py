@@ -41,29 +41,24 @@ class RunThermoSim:
         self.delT_ambientTemp_wallTemp = 0
 
     def initialize_variables(self) -> None:
-
-
-
-        def calculate_area_bb(self):
-            # Calculations based on heat transfer principles
-
+        # Calculations based on heat transfer principles
 
         # solar index:
-        SI = float(self.entriesBB['Solar Index'].get())
-        print("SI", SI)
+        solar_index = float(self.entriesBB['Solar Index'].get())
+        print("Solar Index", solar_index)
 
         # ambient temperature aka average outside temperature, units: celsius (ºC)
-        ambientTemp_bb = float(self.entriesBB['Average Daytime Air Temperature (ºC)'].get())
-        T_inf = ambientTemp_bb + self.kelvin  # units: converted celsius (ºC) to Kelvin (K)
+        ambient_temperature_black_body: float = float(self.entriesBB['Average Daytime Air Temperature (ºC)'].get())
+        temperature_infinite = ambient_temperature_black_body + self.kelvin  # units: converted ºC to Kelvin (K)
 
         # initial water temperature, units: celsius (ºC), 20 for our test
-        initTemp = float(self.entriesBB['Initial Water Temperature (ºC)'].get())
-        self.Ti = initTemp + self.kelvin  # units: converted celsius (ºC) to Kelvin (K)
+        initial_temperature = float(self.entriesBB['Initial Water Temperature (ºC)'].get())
+        self.Ti = initial_temperature + self.kelvin  # units: converted celsius (ºC) to Kelvin (K)
 
         # final water temperature in celsius (ºC), 50 for our test
-        finalTemp = float(self.entriesBB['Final Water Temperature (ºC)'].get())
+        final_temperature = float(self.entriesBB['Final Water Temperature (ºC)'].get())
         # Tf = finalTemp + kelvin  # units: converted celsius (ºC) to Kelvin (K)
-        self.Tf = finalTemp + self.kelvin
+        self.Tf = final_temperature + self.kelvin
 
         # volume, units: gallons (Gal), 134 gallons in our test
         self.V_gal = float(self.entriesBB['Volume of Water (Gal)'].get())
@@ -78,15 +73,15 @@ class RunThermoSim:
         h = 3  # worst case convective heat transfer coefficient
 
         # number of hours (hrs) to heat water, 5.5 for our test
-        hrsWithSun = float(self.entriesBB['Hours Per Day'].get())
-        time = hrsWithSun * 3600  # units: converted hrs to seconds
+        hours_in_sun: float = float(self.entriesBB['Hours Per Day'].get())
+        time = hours_in_sun * 3600  # units: converted hrs to seconds
 
         deltaT_airPlexiAndBB_waterTempBB = -2.5
         # solve for area and output it.
         self.A = (self.m * self.Cp * (self.Tf - self.Ti)) / (
-                (SI - e * sigma * ((self.Tf ** 4) - (T_inf ** 4)) - (h * deltaT_airPlexiAndBB_waterTempBB)) * time)
+                (solar_index - e * sigma * ((self.Tf ** 4) - (temperature_infinite ** 4)) - (h * deltaT_airPlexiAndBB_waterTempBB)) * time)
         self.Af = np.round(self.A, 2)
-        print(f'The final required area is {self.Af} m^2 to achieve {finalTemp}ºC under the conditions')  # check boxes:
+        print(f'The final required area is {self.Af} m^2 to achieve {final_temperature}ºC under the conditions')  # check boxes:
 
         self.outputs['Required Area (m^2): '].delete(0, tk.END)
         self.outputs['Required Area (m^2): '].insert(0, self.Af)
