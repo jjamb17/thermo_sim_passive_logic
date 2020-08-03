@@ -2,15 +2,13 @@ import numpy as np
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
-from constants_thermo_sim import CP, KELVIN, WATERDENSITY, SIGMA, E, H
+from constants_thermo_sim import CP, KELVIN, WATERDENSITY, SIGMA, EP, H
 
 
 class RunThermoSim:
 
     def __init__(self):
         self.entriesTank = {}
-        self.sa_tank = float(self.entriesTank['Surface Area of Tank (m^2)'].get())
-        self.Af = np.round(self.A, 2)
         self.outputFields = ('Required Area (m^2): ', 'Morning Temperature: (ºC)')
         self.fieldsTank = ('Tank Thickness (m)', 'Thermal Conductivity (k of Tank, W/(m*K))',
                            'Thermal Conductivity (k of Insulation, W/(m*K))',
@@ -20,7 +18,7 @@ class RunThermoSim:
         self.fieldsBB = (
             'Solar Index', 'Average Daytime Air Temperature (ºC)', 'Initial Water Temperature (ºC)',
             'Final Water Temperature (ºC)', 'Volume of Water (Gal)', 'Hours Per Day')
-        self.build_gui()
+
         self.Tf = 0  # initialize Temperature Final to be a global variable
         self.hrsWithSun = 0
 
@@ -33,14 +31,16 @@ class RunThermoSim:
         self.outputs = {}
 
         self.V_gal = 0
-
+        self.Af = 0
         self.V = 0
 
         self.m = 0
-
+        self.sa_tank = 0
         self.cost = 0
 
         self.delT_ambientTemp_wallTemp = 0
+
+        self.build_gui()
 
     def calculate_area_black_body(self):
 
@@ -82,8 +82,9 @@ class RunThermoSim:
 
         # solve for area and output it.
         self.A = (self.m * CP * (self.Tf - self.Ti)) / (
-                (solar_index - E * SIGMA * ((self.Tf ** 4) - (temperature_infinite ** 4)) -
+                (solar_index - EP * SIGMA * ((self.Tf ** 4) - (temperature_infinite ** 4)) -
                  (H * delta_temperature_glass_and_black_body)) * time)
+        self.Af = np.round(self.A, 2)
         print(f'The final required area is {self.Af} m^2 to achieve {final_temperature}ºC under the conditions')
 
         self.outputs['Required Area (m^2): '].delete(0, tk.END)
@@ -105,6 +106,7 @@ class RunThermoSim:
 
         heat_transfer_coefficient = 7
         # surface area of tank, units: m^2
+        self.sa_tank = float(self.entriesTank['Surface Area of Tank (m^2)'].get())
 
         # thermal resistance, units: (m^2 * K)/W
         # resistance value of heat transfer crossing boundaries
