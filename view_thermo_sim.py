@@ -8,7 +8,7 @@ class ThermoSimView:
         self.controller = None
         self.model = None
 
-    def make_form(self, root):  # fieldsBB, fieldsTank, outputFields:
+    def make_form(self, root):  # fields black body, fieldsTank, outputFields:
 
         entries_frame = ttk.Frame(root)
         entries_frame.grid(row=0, column=0, rowspan=5, columnspan=6, sticky=W + E + N + S)

@@ -8,6 +8,7 @@ class ThermoSimController:
         self.model = None
 
     def calculate_area_black_body(self):
+        # this function calculates how much energy will be transferred from the sun into the water
 
         # Calculations based on heat transfer principles
 
@@ -32,10 +33,10 @@ class ThermoSimController:
         self.model.volume_gal = float(self.model.entries_black_body['Volume of Water (Gal)'].get())
 
         # volume, units: converted into m^3
-        self.model.V = self.model.volume_gal / 264.17
+        self.model.volume = self.model.volume_gal / 264.17
 
         # mass of water in tank, units: kg
-        self.model.m = self.model.V * WATERDENSITY
+        self.model.mass = self.model.volume * WATERDENSITY
 
         # delT_bb = Tf - T_gnd_bb
 
@@ -46,7 +47,7 @@ class ThermoSimController:
         delta_temperature_glass_and_black_body = -2.5  # temperature difference glass and black body
 
         # solve for area and output it.
-        self.model.area = (self.model.m * CP * (self.model.temperature_final - self.model.temperature_initial)) / (
+        self.model.area = (self.model.mass * CP * (self.model.temperature_final - self.model.temperature_initial)) / (
                 (solar_index - EP * SIGMA * ((self.model.temperature_final ** 4) - (temperature_infinite ** 4)) -
                  (H * delta_temperature_glass_and_black_body)) * time)
         self.model.area_final = np.round(self.model.area, 2)
@@ -56,6 +57,7 @@ class ThermoSimController:
         self.model.outputs['Required Area (m^2): '].insert(0, self.model.area_final)
 
     def ins_tank(self):
+        # this function calculates the heat transfer for the tank while the water is being stored overnight
 
         # tank thickness, 0.005 for our test
         t_tank = float(self.model.entriesTank['Tank Thickness (m)'].get())
@@ -71,13 +73,13 @@ class ThermoSimController:
 
         heat_transfer_coefficient = 7
         # surface area of tank, units: m^2
-        self.model.sa_tank = float(self.model.entriesTank['Surface Area of Tank (m^2)'].get())
+        self.model.surface_area_tank = float(self.model.entriesTank['Surface Area of Tank (m^2)'].get())
 
         # thermal resistance, units: (m^2 * K)/W
         # resistance value of heat transfer crossing boundaries
         # for standard fiberglass: R_ins = 15
-        r_ins = t_ins / (k_ins * self.model.sa_tank)
-        r_tank = t_tank / (k_tank * self.model.sa_tank)  # units: (m^2 * K)/W
+        r_ins = t_ins / (k_ins * self.model.surface_area_tank)
+        r_tank = t_tank / (k_tank * self.model.surface_area_tank)  # units: (m^2 * K)/W
         r_total = r_ins + r_tank  # units: (m^2 * K)/W
 
         # the temperature of what is surrounding the tank overnight
@@ -91,22 +93,22 @@ class ThermoSimController:
 
         # energy, units: W
         q = ((
-                     delta_tank_temperature_kelvin * self.model.sa_tank) / r_total) + \
-            heat_transfer_coefficient * self.model.sa_tank * self.model.delT_ambientTemp_wallTemp
+                     delta_tank_temperature_kelvin * self.model.surface_area_tank) / r_total) + \
+            heat_transfer_coefficient * self.model.surface_area_tank * self.model.delT_ambientTemp_wallTemp
 
         hours_without_sun = float(self.model.entriesTank['Hours Overnight'].get())
         hours_without_sun_tank = 24 - hours_without_sun
         time = hours_without_sun_tank * 3600  # conversion of time into seconds
 
         # total energy coming into tank, units: Joules (J)
-        energy_gain = delta_tank_temperature_kelvin * self.model.m * CP
+        energy_gain = delta_tank_temperature_kelvin * self.model.mass * CP
         # total energy lost, units: Joules (J)
         energy_loss = q * time
 
         # percentage of energy lost, units: %
         loss_ratio = (1 - ((energy_gain - energy_loss) / energy_gain)) * 100
         # morning temperature of water, units: celsius (ºC)
-        morning_water_temperature = (energy_gain - energy_loss) / (self.model.m * CP) + ambient_tank_temperature
+        morning_water_temperature = (energy_gain - energy_loss) / (self.model.mass * CP) + ambient_tank_temperature
 
         t_morn = round(morning_water_temperature, 2)
 

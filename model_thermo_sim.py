@@ -25,10 +25,10 @@ class ThermoSimModel:
 
         self.volume_gal = 0
         self.area_final = 0
-        self.V = 0
+        self.volume = 0
 
-        self.m = 0
-        self.sa_tank = 0
+        self.mass = 0
+        self.surface_area_tank = 0
         self.cost = 0
 
         self.delT_ambientTemp_wallTemp = 0
