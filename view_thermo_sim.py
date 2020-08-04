@@ -23,7 +23,7 @@ class ThermoSimView:
             entry_black_body.insert(0, "0")
             label_black_body.grid(row=count_black_body, column=0)
             entry_black_body.grid(row=count_black_body, column=1)
-            self.model.entriesBB[field] = entry_black_body
+            self.model.entries_black_body[field] = entry_black_body
             count_black_body += int(1)
 
         for field in self.model.fieldsTank:

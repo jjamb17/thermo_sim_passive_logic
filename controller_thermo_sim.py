@@ -12,27 +12,27 @@ class ThermoSimController:
         # Calculations based on heat transfer principles
 
         # solar index:
-        solar_index = float(self.model.entriesBB['Solar Index'].get())
+        solar_index = float(self.model.entries_black_body['Solar Index'].get())
         print("Solar Index", solar_index)
 
         # ambient temperature aka average outside temperature, units: celsius (ºC)
-        ambient_temperature_black_body = float(self.model.entriesBB['Average Daytime Air Temperature (ºC)'].get())
+        ambient_temperature_black_body = float(self.model.entries_black_body['Average Daytime Air Temperature (ºC)'].get())
         temperature_infinite = ambient_temperature_black_body + KELVIN  # units: converted ºC to Kelvin (K)
 
         # initial water temperature, units: celsius (ºC), 20 for our test
-        initial_temperature = float(self.model.entriesBB['Initial Water Temperature (ºC)'].get())
-        self.model.Ti = initial_temperature + KELVIN  # units: converted celsius (ºC) to Kelvin (K)
+        initial_temperature = float(self.model.entries_black_body['Initial Water Temperature (ºC)'].get())
+        self.model.temperature_initial = initial_temperature + KELVIN  # units: converted celsius (ºC) to Kelvin (K)
 
         # final water temperature in celsius (ºC), 50 for our test
-        final_temperature = float(self.model.entriesBB['Final Water Temperature (ºC)'].get())
+        final_temperature = float(self.model.entries_black_body['Final Water Temperature (ºC)'].get())
         # Tf = finalTemp + kelvin  # units: converted celsius (ºC) to Kelvin (K)
         self.model.temperature_final = final_temperature + KELVIN
 
         # volume, units: gallons (Gal), 134 gallons in our test
-        self.model.V_gal = float(self.model.entriesBB['Volume of Water (Gal)'].get())
+        self.model.volume_gal = float(self.model.entries_black_body['Volume of Water (Gal)'].get())
 
         # volume, units: converted into m^3
-        self.model.V = self.model.V_gal / 264.17
+        self.model.V = self.model.volume_gal / 264.17
 
         # mass of water in tank, units: kg
         self.model.m = self.model.V * WATERDENSITY
@@ -40,20 +40,20 @@ class ThermoSimController:
         # delT_bb = Tf - T_gnd_bb
 
         # number of hours (hrs) to heat water
-        hours_in_sun: float = float(self.model.entriesBB['Hours Per Day'].get())
+        hours_in_sun: float = float(self.model.entries_black_body['Hours Per Day'].get())
         time = hours_in_sun * 3600  # units: converted hrs to seconds
 
         delta_temperature_glass_and_black_body = -2.5  # temperature difference glass and black body
 
         # solve for area and output it.
-        self.model.A = (self.model.m * CP * (self.model.temperature_final - self.model.Ti)) / (
+        self.model.area = (self.model.m * CP * (self.model.temperature_final - self.model.temperature_initial)) / (
                 (solar_index - EP * SIGMA * ((self.model.temperature_final ** 4) - (temperature_infinite ** 4)) -
                  (H * delta_temperature_glass_and_black_body)) * time)
-        self.model.Af = np.round(self.model.A, 2)
-        print(f'The final required area is {self.model.Af} m^2 to achieve {final_temperature}ºC under the conditions')
+        self.model.area_final = np.round(self.model.area, 2)
+        print(f'The final required area is {self.model.area_final} m^2 to achieve {final_temperature}ºC under the conditions')
 
         self.model.outputs['Required Area (m^2): '].delete(0, tk.END)
-        self.model.outputs['Required Area (m^2): '].insert(0, self.model.Af)
+        self.model.outputs['Required Area (m^2): '].insert(0, self.model.area_final)
 
     def ins_tank(self):
 
@@ -85,9 +85,9 @@ class ThermoSimController:
         ambient_tank_temperature = float(self.model.entriesTank['Average Nightly Air Temperature (ºC)'].get())
         ambient_tank_temperature_kelvin = ambient_tank_temperature + KELVIN  # units: converted
 
-        self.model.Ti = self.model.temperature_final
+        self.model.temperature_initial = self.model.temperature_final
 
-        delta_tank_temperature_kelvin = self.model.Ti - ambient_tank_temperature_kelvin  # units: Kelvin (K)
+        delta_tank_temperature_kelvin = self.model.temperature_initial - ambient_tank_temperature_kelvin  # units: Kelvin (K)
 
         # energy, units: W
         q = ((

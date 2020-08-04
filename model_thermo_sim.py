@@ -15,16 +15,16 @@ class ThermoSimModel:
         self.temperature_final = 0  # initialize Temperature Final to be a global variable
         self.hrsWithSun = 0
 
-        self.Ti = 0
+        self.temperature_initial = 0
         self.temperature_final = 0
-        self.A = 0
+        self.area = 0
 
-        self.entriesBB = {}
+        self.entries_black_body = {}
 
         self.outputs = {}
 
-        self.V_gal = 0
-        self.Af = 0
+        self.volume_gal = 0
+        self.area_final = 0
         self.V = 0
 
         self.m = 0
