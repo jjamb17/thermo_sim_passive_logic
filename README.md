@@ -5,7 +5,7 @@ maintains the previously heated water temperature. Running this simulation produ
 to satisfy the input requirements. The next part of the GUI calculates the estimated water temperature after being left
 in a given insulated tank. 
 
-###Prerequisites
+### Prerequisites
 
 Download either executable file main_thermo_sim for linux users and main_thermo_sim.exe then run the file.
 
@@ -13,7 +13,7 @@ To run the source code locally the following python libraries are required:
 1. NumPy
 2. Tkinter
 
-###Installation
+### Installation
 
 For the NumPy library
     
